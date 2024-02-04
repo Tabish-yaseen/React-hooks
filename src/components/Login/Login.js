@@ -1,8 +1,11 @@
-import React, { useState,useEffect,useReducer } from 'react';
+import React, { useState,useEffect,useReducer,useContext } from 'react';
 
 import Card from '../UI/Card/Card';
 import classes from './Login.module.css';
 import Button from '../UI/Button/Button';
+import Input from '../UI/Input/Input';
+import AuthContext from '../../store/auth-context';
+
 const emailReducer=(state,action)=>{
   switch(action.type){
      case 'User_Email':
@@ -26,11 +29,12 @@ const passwordReducer=(state,action)=>{
   
 }
 
-const Login = (props) => {
+const Login = () => {
   // const [enteredEmail, setEnteredEmail] = useState('');
   // const [emailIsValid, setEmailIsValid] = useState();
   // const [enteredPassword, setEnteredPassword] = useState('');
   // const [passwordIsValid, setPasswordIsValid] = useState();
+  const context=useContext(AuthContext)
   const [enteredCollege,setEnteredCollege]=useState('')
   const [collegeNameIsValid,setCollegeIsValid]=useState()
  
@@ -43,13 +47,12 @@ const Login = (props) => {
    const{isValid:passwordIsValid}=passwordState
   useEffect(()=>{
    const identifier= setTimeout(()=>{ 
-    console.log("tabishaa")
+  
     setFormIsValid(
       emailIsValid && passwordIsValid && enteredCollege.trim().length!==0
     );},500)
    
       return ()=>{
-        console.log('clearkrhooo')
         clearTimeout(identifier)
 
       }
@@ -93,26 +96,21 @@ const Login = (props) => {
 
   const submitHandler = (event) => {
     event.preventDefault();
-    props.onLogin(emailState.value, passwordState.value);
+    context.onLogIn(emailState.value, passwordState.value);
   };
 
   return (
     <Card className={classes.login}>
       <form onSubmit={submitHandler}>
-        <div
-          className={`${classes.control} ${
-           emailState.isValid === false ? classes.invalid : ''
-          }`}
-        >
-          <label htmlFor="email">E-Mail</label>
-          <input
-            type="email"
-            id="email"
-            value={emailState.value}
-            onChange={emailChangeHandler}
-            onBlur={validateEmailHandler}
-          />
-        </div>
+        <Input
+        isValid={emailState.isValid}
+        type='email'
+        id='email'
+        value={emailState.value}
+        onChange={emailChangeHandler}
+        onBlur={validateEmailHandler}
+        />
+        
         <div
           className={`${classes.control} ${
             passwordState.isValid === false ? classes.invalid : ''
